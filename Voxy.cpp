@@ -20,13 +20,14 @@ using namespace glm;
 #include "util/controls.hpp"
 #include "util/objloader.hpp"
 #include "util/vboindexer.hpp"
+#include "util/text2D.hpp"
 
-int main(void)
+int main( void )
 {
 	// Initialise GLFW
-	if (!glfwInit())
+	if( !glfwInit() )
 	{
-		fprintf(stderr, "Failed to initialize GLFW\n");
+		fprintf( stderr, "Failed to initialize GLFW\n" );
 		getchar();
 		return -1;
 	}
@@ -38,10 +39,9 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "Tutorial 08 - Basic Shading", NULL, NULL);
-	if (window == NULL)
-	{
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+	window = glfwCreateWindow( 1024, 768, "Tutorial 11 - 2D Fonts", NULL, NULL);
+	if( window == NULL ){
+		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
 		glfwTerminate();
 		return -1;
@@ -50,8 +50,7 @@ int main(void)
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK)
-	{
+	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		getchar();
 		glfwTerminate();
@@ -60,12 +59,12 @@ int main(void)
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-	// Hide the mouse and enable unlimited mouvement
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	// Set the mouse at the center of the screen
-	glfwPollEvents();
-	glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+    // Hide the mouse and enable unlimited mouvement
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    
+    // Set the mouse at the center of the screen
+    glfwPollEvents();
+    glfwSetCursorPos(window, 1024/2, 768/2);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
@@ -73,7 +72,7 @@ int main(void)
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LESS); 
 
 	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
@@ -83,7 +82,7 @@ int main(void)
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("StandardShading.vertexshader", "StandardShading.fragmentshader");
+	GLuint programID = LoadShaders( "StandardShading.vertexshader", "StandardShading.fragmentshader" );
 
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
@@ -92,7 +91,7 @@ int main(void)
 
 	// Load the texture
 	GLuint Texture = loadDDS("uvmap.DDS");
-
+	
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
 
@@ -102,29 +101,57 @@ int main(void)
 	std::vector<glm::vec3> normals;
 	bool res = loadOBJ("suzanne.obj", vertices, uvs, normals);
 
+	std::vector<unsigned short> indices;
+	std::vector<glm::vec3> indexed_vertices;
+	std::vector<glm::vec2> indexed_uvs;
+	std::vector<glm::vec3> indexed_normals;
+	indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
+
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
 
 	GLuint uvbuffer;
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
 
 	GLuint normalbuffer;
 	glGenBuffers(1, &normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
+
+	// Generate a buffer for the indices as well
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
 
 	// Get a handle for our "LightPosition" uniform
 	glUseProgram(programID);
 	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
-	do
-	{
+	// Initialize our little text library with the Holstein font
+	initText2D( "Holstein.DDS" );
+
+	// For speed computation
+	double lastTime = glfwGetTime();
+	int nbFrames = 0;
+
+	do{
+
+		// Measure speed
+		double currentTime = glfwGetTime();
+		nbFrames++;
+		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
+			// printf and reset
+			printf("%f ms/frame\n", 1000.0/double(nbFrames));
+			nbFrames = 0;
+			lastTime += 1.0;
+		}
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -145,7 +172,7 @@ int main(void)
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
-		glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glm::vec3 lightPos = glm::vec3(4,4,4);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		// Bind our texture in Texture Unit 0
@@ -190,31 +217,48 @@ int main(void)
 			(void*)0                          // array buffer offset
 		);
 
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+
 		// Draw the triangles !
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			indices.size(),    // count
+			GL_UNSIGNED_SHORT, // type
+			(void*)0           // element array buffer offset
+		);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+
+		char text[256];
+		sprintf(text,"%.2f sec", glfwGetTime() );
+		printText2D(text, 10, 500, 60);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(window) == 0);
+	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+		   glfwWindowShouldClose(window) == 0 );
 
-	// Cleanup VBO and shader
+	// Cleanup VBO, shader and texture
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &uvbuffer);
 	glDeleteBuffers(1, &normalbuffer);
+	glDeleteBuffers(1, &elementbuffer);
 	glDeleteProgram(programID);
 	glDeleteTextures(1, &Texture);
 	glDeleteVertexArrays(1, &VertexArrayID);
+
+	// Delete the text's VBO, the shader and the texture
+	cleanupText2D();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
 
 	return 0;
 }
+
