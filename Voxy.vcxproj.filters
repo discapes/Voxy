@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="util\controls.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="util\objloader.cpp">
       <Filter>util</Filter>
     </ClCompile>
@@ -30,9 +27,6 @@
     <ClCompile Include="util\tangentspace.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="util\text2D.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="util\texture.cpp">
       <Filter>util</Filter>
     </ClCompile>
@@ -42,11 +36,23 @@
     <ClCompile Include="Voxy.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardShaders.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="TextPrinter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="util\controls.hpp">
-      <Filter>util</Filter>
-    </ClInclude>
     <ClInclude Include="util\objloader.hpp">
       <Filter>util</Filter>
     </ClInclude>
@@ -59,27 +65,45 @@
     <ClInclude Include="util\tangentspace.hpp">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="util\text2D.hpp">
-      <Filter>util</Filter>
-    </ClInclude>
     <ClInclude Include="util\texture.hpp">
       <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="util\vboindexer.hpp">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="includes.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardShaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="TextPrinter.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="StandardShading.fragmentshader">
+    <None Include="StandardShader.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="StandardShading.vertexshader">
+    <None Include="StandardShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="TextVertexShader.vertexshader">
+    <None Include="TextShader.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="TextVertexShader.fragmentshader">
+    <None Include="TextShader.vert">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
