@@ -16,7 +16,6 @@ void TextPrinter::print(const char* text, int x, int y, int size)
 {
 	unsigned int length = strlen(text);
 
-	// Fill buffers
 	std::vector<glm::vec2> vertices;
 	std::vector<glm::vec2> UVs;
 	for (unsigned int i = 0; i < length; i++)
@@ -56,32 +55,26 @@ void TextPrinter::print(const char* text, int x, int y, int size)
 	glBindBuffer(GL_ARRAY_BUFFER, uvBuf);
 	glBufferData(GL_ARRAY_BUFFER, UVs.size() * sizeof(glm::vec2), &UVs[0], GL_STATIC_DRAW);
 
-	// Bind shader
 	glUseProgram(program);
 
-	// Bind texture
-	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fontAtlas);
-	// Set our "myTextureSampler" sampler to use Texture Unit 0
 	glUniform1i(uniFontAtlas, 0);
 
-	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	// 2nd attribute buffer : UVs
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, uvBuf);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+	int wasEnabled = glIsEnabled(GL_BLEND);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// Draw call
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
-	glDisable(GL_BLEND);
+	if (!wasEnabled) glDisable(GL_BLEND);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
