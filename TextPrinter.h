@@ -16,3 +16,5 @@ public:
 	void print(const char* text, int x, int y, int size);
 	~TextPrinter();
 };
+
+extern TextPrinter* printer;

@@ -14,7 +14,19 @@ Game::Game(Shaders* shaders)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(width, height, "DEMO", NULL, NULL);
+	if (G.fullscreen)
+	{
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		G.width = mode->width;
+		G.height = mode->height;
+		window = glfwCreateWindow(G.width, G.height, "DEMO", monitor, NULL);
+	} else
+	{
+		window = glfwCreateWindow(G.width, G.height, "DEMO", NULL, NULL);
+	}
+
+
 	if (!window)
 		errorGLFW("glfwCreateWindow()");
 	glfwMakeContextCurrent(window);
@@ -27,7 +39,7 @@ Game::Game(Shaders* shaders)
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwPollEvents(); // so the below line will work
-	glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+	glfwSetCursorPos(window, G.width / 2, G.height / 2);
 
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	glEnable(GL_DEPTH_TEST);

@@ -12,17 +12,20 @@
 void drawFPS();
 double fps();
 
+TextPrinter* printer;
+
 int main(void)
 {
 	Game game(new StandardShaders("StandardShader.vert", "StandardShader.frag"));
-	
+
+	printer = new TextPrinter("Holstein.DDS", "TextShader.vert", "TextShader.frag");
+
 	Model suzanne("suzanne.obj", "uvmap.DDS");
 
 	do
 	{
-		game.camera->processInput();
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		static float angle = 0;
 		if (true)
 		{
@@ -36,22 +39,24 @@ int main(void)
 			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(0, 0, 1)), vec3(-3, 0, 0)));
 		}
 		angle -= 0.001f;
+
 		drawFPS();
+		game.camera->processInput();
 
 		glfwSwapBuffers(game.window);
 		glfwPollEvents();
 	}
 	while (glfwGetKey(game.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(game.window) == 0);
+
+	delete printer;
 }
 
 void drawFPS()
 {
-	static TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
-
 	// std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 50)); // to test FPS counter
 	char text[256];
 	sprintf(text, "%.2f FPS", fps());
-	printer.print(text, 10, 500, 60);
+	printer->print(text, 10, 500, 60);
 }
 
 double fps()

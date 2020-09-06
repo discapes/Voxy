@@ -11,9 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
-
-#define width 1024
-#define height 768
+#include "Settings.h"
 
 inline void errorGLFW(const char* whatFailed)
 {

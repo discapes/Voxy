@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "TextPrinter.h"
 #include "Camera.h"
 
 #pragma warning ( disable : 4244 )
@@ -10,9 +11,7 @@ void Camera::processInput()
 	double delta = currentTime - lastTime;
 
 	calcMovement(delta);
-	calcLookDirection();
-
-	viewMatrix = glm::lookAt(pos, pos + lookDirection, vec3(0,1,0));
+	viewMatrix = calcViewMatrix();
 
 	lastTime = currentTime;
 }
@@ -20,48 +19,56 @@ void Camera::processInput()
 void Camera::calcMovement(double delta)
 {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		pos.y += moveSpeed * delta;
+		pos.y += G.moveSpeed * delta;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		pos.y -= moveSpeed * delta;
+		pos.y -= G.moveSpeed * delta;
 
+	double magnitude = sqrt(lookDirection.x * lookDirection.x + lookDirection.z * lookDirection.z);
+	vec3 lookDirFlat = vec3(lookDirection.x / magnitude, 0, lookDirection.z / magnitude);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		pos.x += (lookDirection.x * moveSpeed) * delta;
-		pos.z += (lookDirection.z * moveSpeed) * delta;
+		pos.x += (lookDirFlat.x * G.moveSpeed) * delta;
+		pos.z += (lookDirFlat.z * G.moveSpeed) * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		pos.x -= (lookDirection.x * moveSpeed) * delta;
-		pos.z -= (lookDirection.z * moveSpeed) * delta;
+		pos.x -= (lookDirFlat.x * G.moveSpeed) * delta;
+		pos.z -= (lookDirFlat.z * G.moveSpeed) * delta;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		pos.x += (lookDirection.z * moveSpeed) * delta;
-		pos.z += (-lookDirection.x * moveSpeed) * delta;
+		pos.x += (lookDirFlat.z * G.moveSpeed) * delta;
+		pos.z += (-lookDirFlat.x * G.moveSpeed) * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		pos.x -= (lookDirection.z * moveSpeed) * delta;
-		pos.z -= (-lookDirection.x * moveSpeed) * delta;
+		pos.x -= (lookDirFlat.z * G.moveSpeed) * delta;
+		pos.z -= (-lookDirFlat.x * G.moveSpeed) * delta;
 	}
 }
 
-void Camera::calcLookDirection()
+mat4 Camera::calcViewMatrix()
 {
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
-	glfwSetCursorPos(window, width / 2, height / 2);
-	latitude += lookSpeed * 0.005 * (height / 2 - ypos);
-	longtitude += lookSpeed * 0.005 * -(width / 2 - xpos);
-	latitude = clamp(latitude, -1., 1.);
+	glfwSetCursorPos(window, G.width / 2, G.height / 2);
+	latitude += G.lookSpeed * 0.005 * (G.height / 2 - ypos);
+	longtitude += G.lookSpeed * 0.005 * -(G.width / 2 - xpos);
+	latitude = clamp(latitude, -.999, .999);
 	longtitude = longtitude < -1. ? 1. : (longtitude > 1. ? -1. : longtitude);
 
 	double latRadians = latitude * half_pi<double>(); // radians in circle = 2pi, 1/4 circle = half_pi, so you can look 90 degrees up or down
 	double longRadians = longtitude * pi<double>();
+
 	lookDirection = vec3(
-		sin(longRadians),
+		sin(longRadians) * cos(latRadians),
 		sin(latRadians),
 		-cos(latRadians) * cos(longRadians)
 	);
+
+	char text[256];
+	sprintf(text, "%+.1f, %+.1f, %+.1f", lookDirection.x, lookDirection.y, lookDirection.z);
+	printer->print(text, 10, 450, 20);
+	return glm::lookAt(pos, pos + lookDirection, vec3(0,1,0));
 }

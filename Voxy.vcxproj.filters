@@ -51,6 +51,9 @@
     <ClCompile Include="TextPrinter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util\objloader.hpp">
@@ -90,6 +93,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="TextPrinter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
