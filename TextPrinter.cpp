@@ -14,7 +14,7 @@ TextPrinter::TextPrinter(const char* texturePath, const char* vertexShader, cons
 
 void TextPrinter::print(const char* text, int x, int y, int size)
 {
-	unsigned int length = strlen(text);
+	size_t length = strlen(text);
 
 	std::vector<glm::vec2> vertices;
 	std::vector<glm::vec2> UVs;
@@ -72,7 +72,7 @@ void TextPrinter::print(const char* text, int x, int y, int size)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());
 
 	if (!wasEnabled) glDisable(GL_BLEND);
 

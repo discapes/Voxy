@@ -13,6 +13,7 @@ Game::Game(Shaders* shaders)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, G.doubleBuffered);
 
 	if (G.fullscreen)
 	{
@@ -45,7 +46,6 @@ Game::Game(Shaders* shaders)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	camera = new Camera(window);
 	shaders->build();
 }
 

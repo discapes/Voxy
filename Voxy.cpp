@@ -15,7 +15,7 @@ TextPrinter* printer;
 
 int main(void)
 {
-	Game game(new StandardShaders("StandardShader.vert", "StandardShader.frag"));
+	Game game(new StandardShaders("StandardShader.vert", "StandardShader.frag", new Camera(window)));
 
 	printer = new TextPrinter("Holstein.DDS", "TextShader.vert", "TextShader.frag");
 
@@ -24,31 +24,20 @@ int main(void)
 	do
 	{
 		game.calcFrameDelta();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		static float angle = 0;
-		if (true)
-		{
-			game.shaders->draw(suzanne, game.camera, rotate(translate(mat4(1), vec3(0, 0, 0)), angle, vec3(1, 0, 0)));
-			game.shaders->draw(suzanne, game.camera, rotate(translate(mat4(1), vec3(3, 0, 0)), angle, vec3(0, 1, 0)));
-			game.shaders->draw(suzanne, game.camera, rotate(translate(mat4(1), vec3(-3, 0, 0)), angle, vec3(0, 0, 1)));
-		} else
-		{
-			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(1, 0, 0)), vec3(0, 0, 0)));
-			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(0, 1, 0)), vec3(3, 0, 0)));
-			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(0, 0, 1)), vec3(-3, 0, 0)));
-		}
-		angle -= G.frameDelta;
-
-		//std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 50)); // artificial lag
-		char text[0x10];
-		sprintf(text, "%.f FPS", fps());
-		printer->print(text, 5, 10, 20);
-
+		glfwPollEvents();
 		game.camera->processInput();
 
-		glfwSwapBuffers(game.window);
-		glfwPollEvents();
+
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		//std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 50)); // artificial lag
+
+
+
+
+		if (G.doubleBuffered) glfwSwapBuffers(game.window); else glFlush();
 	}
 	while (glfwGetKey(game.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(game.window) == 0);
 
@@ -72,4 +61,47 @@ double fps()
 	}
 	nbFrames++;
 	return fps;
+}
+
+void printText(Camera* camera)
+{
+	char text[0x10];
+	sprintf(text, "%.f FPS", fps());
+	printer->print(text, 5, 10, 20);
+
+	char text[0x20];
+	sprintf(text, "%+.1fx, %+.1fy, %+.1fz", camera->forward.x, camera->forward.y, camera->forward.z);
+	printer->print(text, 5, 570, 20);
+	sprintf(text, "(%+.1f°, %+.1f°)", camera->latitude * 90, camera->longtitude * 180);
+	printer->print(text, 5, 540, 20);
+
+	sprintf(text, "%+.1fx", camera->pos.x);
+	printer->print(text, 700, 50, 20);
+	sprintf(text, "%+.1fy", camera->pos.y);
+	printer->print(text, 700, 30, 20);
+	sprintf(text, "%+.1fz", camera->pos.z);
+	printer->print(text, 700, 10, 20);
+}
+
+void renderThreeModels(Model* model, Shaders* shaders)
+{
+	glUseProgram(shaders->program);
+
+	static float angle = 0;
+	static vec3 x(1, 0, 0);
+	static vec3 y(0, 1, 0);
+	static vec3 z(0, 0, 1);
+	static mat4 identity(1);
+	if (true)
+	{
+		shaders->draw(model, game.camera, rotate(translate(identity, vec3(0, 0, 0)), angle, x));
+		shaders->draw(model, game.camera, rotate(translate(identity, vec3(3, 0, 0)), angle, y));
+		shaders->draw(model, game.camera, rotate(translate(identity, vec3(-3, 0, 0)), angle, z));
+	} else
+	{
+		shaders->draw(model, game.camera, translate(rotate(identity, angle, x), vec3(0, 0, 0)));
+		shaders->draw(model, game.camera, translate(rotate(identity, angle, y), vec3(3, 0, 0)));
+		shaders->draw(model, game.camera, translate(rotate(identity, angle, z), vec3(-3, 0, 0)));
+	}
+	angle -= (float)G.frameDelta;
 }

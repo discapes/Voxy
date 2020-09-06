@@ -74,20 +74,5 @@ mat4 Camera::calcViewMatrix()
 		cosLat,
 		sinLat * cosLong
 	);
-	{
-		char text[0x20];
-		sprintf(text, "%+.1fx, %+.1fy, %+.1fz", forward.x, forward.y, forward.z);
-		printer->print(text, 5, 570, 20);
-		sprintf(text, "(%+.1f°, %+.1f°)", latitude * 90, longtitude * 180);
-		printer->print(text, 5, 540, 20);
-
-		char posText[0x8];
-		sprintf(posText, "%+.1fx", pos.x);
-		printer->print(posText, 700, 50, 20);
-		sprintf(posText, "%+.1fy", pos.y);
-		printer->print(posText, 700, 30, 20);
-		sprintf(posText, "%+.1fz", pos.z);
-		printer->print(posText, 700, 10, 20);
-	}
 	return glm::lookAt(pos, pos + forward, up);
 }

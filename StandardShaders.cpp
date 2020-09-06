@@ -18,18 +18,13 @@ StandardShaders::~StandardShaders()
 	glDeleteProgram(program);
 }
 
-void StandardShaders::draw(Model& model, Camera* camera, mat4 modelMatrix)
+void StandardShaders::draw(Model& model, mat4 modelMatrix)
 {
-	glUseProgram(program);
-
-	glm::mat4 M = modelMatrix;
-	glm::mat4 V = camera->getViewMatrix();
-	glm::mat4 P = camera->getProjMatrix();
-	glm::mat4 MVP = P * V * M;
+	glm::mat4 MVP = camera->projMatrix * camera->viewMatrix * modelMatrix;
 
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
-	glUniformMatrix4fv(uniM, 1, GL_FALSE, &M[0][0]);
-	glUniformMatrix4fv(uniV, 1, GL_FALSE, &V[0][0]);
+	glUniformMatrix4fv(uniM, 1, GL_FALSE, &modelMatrix[0][0]);
+	glUniformMatrix4fv(uniV, 1, GL_FALSE, &camera->viewMatrix[0][0]);
 
 	glUniform3f(uniLightColor, lightColor.x, lightColor.y, lightColor.z);
 	glUniform3f(uniLightPos, lightPos.x, lightPos.y, lightPos.z);
