@@ -9,7 +9,6 @@
 #include "util/objloader.hpp"
 #include "util/vboindexer.hpp"
 
-void drawFPS();
 double fps();
 
 TextPrinter* printer;
@@ -24,6 +23,7 @@ int main(void)
 
 	do
 	{
+		game.calcFrameDelta();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		static float angle = 0;
@@ -38,9 +38,13 @@ int main(void)
 			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(0, 1, 0)), vec3(3, 0, 0)));
 			game.shaders->draw(suzanne, game.camera, translate(rotate(mat4(1), angle, vec3(0, 0, 1)), vec3(-3, 0, 0)));
 		}
-		angle -= 0.001f;
+		angle -= G.frameDelta;
 
-		drawFPS();
+		//std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 50)); // artificial lag
+		char text[0x10];
+		sprintf(text, "%.f FPS", fps());
+		printer->print(text, 5, 10, 20);
+
 		game.camera->processInput();
 
 		glfwSwapBuffers(game.window);
@@ -51,14 +55,6 @@ int main(void)
 	delete printer;
 }
 
-void drawFPS()
-{
-	// std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 50)); // to test FPS counter
-	char text[256];
-	sprintf(text, "%.2f FPS", fps());
-	printer->print(text, 10, 500, 60);
-}
-
 double fps()
 {
 	static double fps;
@@ -67,7 +63,6 @@ double fps()
 	double currentTime = glfwGetTime();
 
 	static int nbFrames = 0;
-	nbFrames++;
 	
 	if (currentTime - lastTime >= 1.0)
 	{
@@ -75,5 +70,6 @@ double fps()
 		nbFrames = 0;
 		lastTime = currentTime;
 	}
+	nbFrames++;
 	return fps;
 }

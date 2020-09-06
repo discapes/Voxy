@@ -6,69 +6,88 @@
 
 void Camera::processInput()
 {
-	static double lastTime = glfwGetTime();
-	double currentTime = glfwGetTime();
-	double delta = currentTime - lastTime;
-
-	calcMovement(delta);
+	readControls();
 	viewMatrix = calcViewMatrix();
-
-	lastTime = currentTime;
 }
 
-void Camera::calcMovement(double delta)
-{
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		pos.y += G.moveSpeed * delta;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		pos.y -= G.moveSpeed * delta;
-
-	double magnitude = sqrt(lookDirection.x * lookDirection.x + lookDirection.z * lookDirection.z);
-	vec3 lookDirFlat = vec3(lookDirection.x / magnitude, 0, lookDirection.z / magnitude);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		pos.x += (lookDirFlat.x * G.moveSpeed) * delta;
-		pos.z += (lookDirFlat.z * G.moveSpeed) * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		pos.x -= (lookDirFlat.x * G.moveSpeed) * delta;
-		pos.z -= (lookDirFlat.z * G.moveSpeed) * delta;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		pos.x += (lookDirFlat.z * G.moveSpeed) * delta;
-		pos.z += (-lookDirFlat.x * G.moveSpeed) * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		pos.x -= (lookDirFlat.z * G.moveSpeed) * delta;
-		pos.z -= (-lookDirFlat.x * G.moveSpeed) * delta;
-	}
-}
-
-mat4 Camera::calcViewMatrix()
+void Camera::readControls()
 {
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	glfwSetCursorPos(window, G.width / 2, G.height / 2);
 	latitude += G.lookSpeed * 0.005 * (G.height / 2 - ypos);
 	longtitude += G.lookSpeed * 0.005 * -(G.width / 2 - xpos);
-	latitude = clamp(latitude, -.999, .999);
+	latitude = clamp(latitude, -1., 1.);
 	longtitude = longtitude < -1. ? 1. : (longtitude > 1. ? -1. : longtitude);
 
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		pos.y += G.moveSpeed * G.frameDelta;
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		pos.y -= G.moveSpeed * G.frameDelta;
+
+	double magnitude = sqrt(forward.x * forward.x + forward.z * forward.z);
+	vec3 lookDirFlat = vec3(forward.x / magnitude, 0, forward.z / magnitude);
+	vec3 delta(0,0,0);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		delta.x += (lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+		delta.z += (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		delta.x -= (lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+		delta.z -= (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		delta.x += (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+		delta.z += (-lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		delta.x -= (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+		delta.z -= (-lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+	}
+	normalize(delta);
+	pos += delta;
+}
+
+mat4 Camera::calcViewMatrix()
+{
 	double latRadians = latitude * half_pi<double>(); // radians in circle = 2pi, 1/4 circle = half_pi, so you can look 90 degrees up or down
 	double longRadians = longtitude * pi<double>();
 
-	lookDirection = vec3(
-		sin(longRadians) * cos(latRadians),
-		sin(latRadians),
-		-cos(latRadians) * cos(longRadians)
+	double sinLong = sin(longRadians);
+	double cosLong = cos(longRadians);
+	double sinLat = sin(latRadians);
+	double cosLat = cos(latRadians);
+
+	forward = vec3(
+		sinLong * cosLat,
+		sinLat,
+		-cosLat * cosLong
 	);
 
-	char text[256];
-	sprintf(text, "%+.1f, %+.1f, %+.1f", lookDirection.x, lookDirection.y, lookDirection.z);
-	printer->print(text, 10, 450, 20);
-	return glm::lookAt(pos, pos + lookDirection, vec3(0,1,0));
+	vec3 up = vec3( // @Discape next step is to take advantage of the fact that sin(x + pi / 2) = cos(x) and cos(x + pi / 2) = -sin(x) and make it so that you only compute all these sines and cosines once
+		sinLong * -sinLat,
+		cosLat,
+		sinLat * cosLong
+	);
+	{
+		char text[0x20];
+		sprintf(text, "%+.1fx, %+.1fy, %+.1fz", forward.x, forward.y, forward.z);
+		printer->print(text, 5, 570, 20);
+		sprintf(text, "(%+.1f°, %+.1f°)", latitude * 90, longtitude * 180);
+		printer->print(text, 5, 540, 20);
+
+		char posText[0x8];
+		sprintf(posText, "%+.1fx", pos.x);
+		printer->print(posText, 700, 50, 20);
+		sprintf(posText, "%+.1fy", pos.y);
+		printer->print(posText, 700, 30, 20);
+		sprintf(posText, "%+.1fz", pos.z);
+		printer->print(posText, 700, 10, 20);
+	}
+	return glm::lookAt(pos, pos + forward, up);
 }

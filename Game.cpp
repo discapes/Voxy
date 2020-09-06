@@ -26,10 +26,10 @@ Game::Game(Shaders* shaders)
 		window = glfwCreateWindow(G.width, G.height, "DEMO", NULL, NULL);
 	}
 
-
 	if (!window)
 		errorGLFW("glfwCreateWindow()");
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);
 
 	glewExperimental = true;
 	GLenum code = glewInit();
@@ -55,4 +55,13 @@ Game::~Game()
 	delete camera;
 	delete shaders;
 	glfwTerminate();
+}
+
+void Game::calcFrameDelta()
+{
+	static double lastTime = glfwGetTime();
+	double currentTime = glfwGetTime();
+	G.frameDelta = currentTime - lastTime;
+
+	lastTime = currentTime;
 }

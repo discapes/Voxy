@@ -5,9 +5,11 @@
 class Game
 {
 public:
+
 	Camera* camera;
 	Shaders* shaders;
 	GLFWwindow* window;
 	Game(Shaders* shaders);
+	void calcFrameDelta();
 	~Game();
 };

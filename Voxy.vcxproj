@@ -87,12 +87,14 @@
     <LibraryPath>glew-2.1.0\lib\Release\x64;glfw-3.3.2\lib-vc2019;$(LibraryPath)</LibraryPath>
     <IncludePath>glm-0.9.9.8;glew-2.1.0\include;glfw-3.3.2\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>glew-2.1.0\lib\Release\x64;glfw-3.3.2\lib-vc2019;$(LibraryPath)</LibraryPath>
     <IncludePath>glm-0.9.9.8;glew-2.1.0\include;glfw-3.3.2\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -2,6 +2,8 @@
 
 struct Settings
 {
+	double frameDelta;
+
 	int width = 1024;
 	int height = 768;
 	bool fullscreen = true;

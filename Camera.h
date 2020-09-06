@@ -5,7 +5,7 @@ class Camera
 	GLFWwindow* window;
 
 	vec3 pos { 0,0,4 };
-	vec3 lookDirection{ 0,0,-1 };
+	vec3 forward{ 0,0,-1 };
 	double latitude { 0 };
 	double longtitude{ 0 };
 
@@ -25,5 +25,5 @@ public:
 
 private:
 	mat4 calcViewMatrix();
-	void calcMovement(double timeDelta);
+	void readControls();
 };
