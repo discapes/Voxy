@@ -36,9 +36,6 @@
     <ClCompile Include="Voxy.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -51,7 +48,7 @@
     <ClCompile Include="TextPrinter.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
+    <ClCompile Include="Macros.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,9 +71,6 @@
     <ClInclude Include="util\vboindexer.hpp">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -95,7 +89,7 @@
     <ClInclude Include="TextPrinter.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Settings.h">
+    <ClInclude Include="Macros.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

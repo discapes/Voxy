@@ -158,9 +158,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Macros.cpp" />
     <ClCompile Include="StandardShaders.cpp" />
     <ClCompile Include="TextPrinter.cpp" />
     <ClCompile Include="util\objloader.cpp" />
@@ -172,11 +171,10 @@
     <ClCompile Include="Voxy.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Macros.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="StandardShaders.h" />
     <ClInclude Include="TextPrinter.h" />

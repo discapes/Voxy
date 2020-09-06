@@ -1,7 +1,10 @@
 #include "StandardShaders.h"
 #include "util/shader.hpp"
 
-void StandardShaders::build()
+StandardShaders::StandardShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera)
+	: vertexShaderName(vertexShaderName),
+	fragmentShaderName(fragmentShaderName),
+	camera(camera)
 {
 	program = LoadShaders(vertexShaderName, fragmentShaderName);
 	uniLightPos = glGetUniformLocation(program, "lightPos");
@@ -20,11 +23,11 @@ StandardShaders::~StandardShaders()
 
 void StandardShaders::draw(Model& model, mat4 modelMatrix)
 {
-	glm::mat4 MVP = camera->projMatrix * camera->viewMatrix * modelMatrix;
+	glm::mat4 MVP = camera.projMatrix * camera.viewMatrix * modelMatrix;
 
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &MVP[0][0]);
 	glUniformMatrix4fv(uniM, 1, GL_FALSE, &modelMatrix[0][0]);
-	glUniformMatrix4fv(uniV, 1, GL_FALSE, &camera->viewMatrix[0][0]);
+	glUniformMatrix4fv(uniV, 1, GL_FALSE, &camera.viewMatrix[0][0]);
 
 	glUniform3f(uniLightColor, lightColor.x, lightColor.y, lightColor.z);
 	glUniform3f(uniLightPos, lightPos.x, lightPos.y, lightPos.z);

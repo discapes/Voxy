@@ -1,5 +1,5 @@
 #include "includes.h"
-#include "TextPrinter.h"
+#include "Macros.h"
 #include "Camera.h"
 
 #pragma warning ( disable : 4244 )
@@ -12,42 +12,49 @@ void Camera::processInput()
 
 void Camera::readControls()
 {
+	// my pet peeve
+	GLFWwindow* window = opts.window;
+	int width = opts.width;
+	int height = opts.height;
+	double moveSpeed = opts.moveSpeed;
+	double frameDelta = getFrameDelta();
+
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
-	glfwSetCursorPos(window, G.width / 2, G.height / 2);
-	latitude += G.lookSpeed * 0.005 * (G.height / 2 - ypos);
-	longtitude += G.lookSpeed * 0.005 * -(G.width / 2 - xpos);
+	glfwSetCursorPos(window, width / 2, height / 2);
+	latitude += opts.lookSpeed * 0.005 * (height / 2 - ypos);
+	longtitude += opts.lookSpeed * 0.005 * -(width / 2 - xpos);
 	latitude = clamp(latitude, -1., 1.);
 	longtitude = longtitude < -1. ? 1. : (longtitude > 1. ? -1. : longtitude);
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		pos.y += G.moveSpeed * G.frameDelta;
+		pos.y += moveSpeed * frameDelta;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		pos.y -= G.moveSpeed * G.frameDelta;
+		pos.y -= moveSpeed * frameDelta;
 
 	double magnitude = sqrt(forward.x * forward.x + forward.z * forward.z);
 	vec3 lookDirFlat = vec3(forward.x / magnitude, 0, forward.z / magnitude);
 	vec3 delta(0,0,0);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		delta.x += (lookDirFlat.x * G.moveSpeed) * G.frameDelta;
-		delta.z += (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+		delta.x += (lookDirFlat.x * moveSpeed) * frameDelta;
+		delta.z += (lookDirFlat.z * moveSpeed) * frameDelta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		delta.x -= (lookDirFlat.x * G.moveSpeed) * G.frameDelta;
-		delta.z -= (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
+		delta.x -= (lookDirFlat.x * moveSpeed) * frameDelta;
+		delta.z -= (lookDirFlat.z * moveSpeed) * frameDelta;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		delta.x += (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
-		delta.z += (-lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+		delta.x += (lookDirFlat.z * moveSpeed) * frameDelta;
+		delta.z += (-lookDirFlat.x * moveSpeed) * frameDelta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		delta.x -= (lookDirFlat.z * G.moveSpeed) * G.frameDelta;
-		delta.z -= (-lookDirFlat.x * G.moveSpeed) * G.frameDelta;
+		delta.x -= (lookDirFlat.z * moveSpeed) * frameDelta;
+		delta.z -= (-lookDirFlat.x * moveSpeed) * frameDelta;
 	}
 	normalize(delta);
 	pos += delta;

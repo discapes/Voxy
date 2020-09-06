@@ -3,8 +3,7 @@
 
 class StandardShaders : public Shaders
 {
-
-	Camera* camera;
+	const Camera& camera;
 
 	const char* vertexShaderName;
 	const char* fragmentShaderName;
@@ -16,15 +15,11 @@ class StandardShaders : public Shaders
 	GLuint uniTex{};
 	GLuint uniLightColor{};
 
-	glm::vec3 lightPos = glm::vec3(0, 4, 0);
-	glm::vec3 lightColor = glm::vec3(20, 20, 20);
+	vec3 lightPos = vec3(0, 4, 0);
+	vec3 lightColor = vec3(20, 20, 20);
 
 public:
-	StandardShaders(const char* vertexShaderName, const char* fragmentShaderName, Camera* camera)
-		: vertexShaderName(vertexShaderName),
-		fragmentShaderName(fragmentShaderName),
-		camera(camera)
-	{}
+	StandardShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera);
 
 	void draw(Model& model, mat4 modelMatrix);
 
@@ -32,8 +27,6 @@ public:
 	{
 		return draw(model, glm::translate(mat4(1), location));
 	}
-
-	void build();
 
 	~StandardShaders();
 };

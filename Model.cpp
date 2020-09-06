@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "includes.h"
 #include "util/vboindexer.hpp"
 
 Model::Model(const char* objName, const char* textureDDS)
