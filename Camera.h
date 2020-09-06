@@ -2,9 +2,12 @@
 #include "includes.h"
 #include "Macros.h"
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 class Camera
 {
 public:
+
 	ViewOptions& opts;
 
 	vec3 pos { 0,0,4 };
@@ -15,12 +18,10 @@ public:
 	mat4 viewMatrix { glm::lookAt(pos, pos + vec3(0,0,1), vec3(0, 1, 0)) };
 	mat4 projMatrix { glm::perspective(radians(opts.FOV), (float)opts.width / opts.height, 0.1f, 100.0f) };
 
-	Camera(ViewOptions& opts)
-		: opts(opts)
-	{}
-
+	Camera(ViewOptions& opts);
+	~Camera();
 	void processInput();
-
+	static int getKey(int key);
 private:
 	mat4 calcViewMatrix();
 	void readControls();

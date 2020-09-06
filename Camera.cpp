@@ -4,6 +4,33 @@
 
 #pragma warning ( disable : 4244 )
 
+static Camera* instance;
+
+Camera::Camera(ViewOptions& opts) 
+	: opts(opts)
+{
+	instance = this;
+	glfwSetScrollCallback(opts.window, scroll_callback);
+}
+
+Camera::~Camera()
+{
+	puts("~Camera()");
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	ViewOptions& opts = instance->opts;
+	opts.FOV -= (float)yoffset;
+	opts.FOV = clamp(opts.FOV, 60.f, 160.f);
+	instance->projMatrix = glm::perspective(radians(opts.FOV), (float)opts.width / opts.height, 0.1f, 100.0f);
+}
+
+int Camera::getKey(int key)
+{
+	return glfwGetKey(instance->opts.window, key);
+}
+
 void Camera::processInput()
 {
 	readControls();

@@ -95,6 +95,9 @@ void printInfo(Camera& camera, TextPrinter& printer)
 	sprintf(text, "%.f FPS", fps());
 	printer.print(text, 5, 10, 20);
 
+	sprintf(text, "FoV: %.f°", camera.opts.FOV);
+	printer.print(text, 610, 570, 20);
+
 	sprintf(text, "%+.1fx, %+.1fy, %+.1fz", camera.forward.x, camera.forward.y, camera.forward.z);
 	printer.print(text, 5, 570, 20);
 	sprintf(text, "(%+.1f°, %+.1f°)", camera.latitude * 90, camera.longtitude * 180);
@@ -117,7 +120,16 @@ void drawThreeModels(Model& model, Shaders& shaders)
 	static vec3 y(0, 1, 0);
 	static vec3 z(0, 0, 1);
 	static mat4 identity(1);
-	if (true)
+	static bool transformOrder = true;
+
+	static bool pressedLastFrame = false;
+	if (pressedLastFrame != Camera::getKey(GLFW_KEY_F))
+	{
+		pressedLastFrame = !pressedLastFrame;
+		transformOrder ^= pressedLastFrame;
+	}
+
+	if (transformOrder)
 	{
 		shaders.draw(model, rotate(translate(identity, vec3(0, 0, 0)), angle, x));
 		shaders.draw(model, rotate(translate(identity, vec3(3, 0, 0)), angle, y));

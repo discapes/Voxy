@@ -31,6 +31,6 @@ void main()
 	(
 		matDiffuseColor * diffuseCos 
 		+ matSpecularColor * pow(specularCos, 5)
-	) 
+	)
 	* lightColor / (dist * dist);
 }
