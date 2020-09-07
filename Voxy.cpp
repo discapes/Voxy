@@ -25,6 +25,19 @@ int main(void)
 	{
 		newFrameDelta();
 		glfwPollEvents();
+
+		static bool paused{};
+		ifKeyEvent(GLFW_KEY_P,
+			paused ^= event;
+			if (event) glfwSetInputMode(opts.window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+			if (!paused) glfwSetCursorPos(opts.window, opts.width / 2, opts.height / 2);
+		,)
+		if (paused)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
+		
 		camera.processInput();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -120,16 +133,11 @@ void drawThreeModels(Model& model, Shaders& shaders)
 	static vec3 y(0, 1, 0);
 	static vec3 z(0, 0, 1);
 	static mat4 identity(1);
-	static bool transformOrder = true;
 
-	static bool pressedLastFrame = false;
-	if (pressedLastFrame != Camera::getKey(GLFW_KEY_F))
-	{
-		pressedLastFrame = !pressedLastFrame;
-		transformOrder ^= pressedLastFrame;
-	}
+	static bool altTransform{};
+	ifKeyEvent(GLFW_KEY_F, altTransform ^= event,)
 
-	if (transformOrder)
+	if (altTransform)
 	{
 		shaders.draw(model, rotate(translate(identity, vec3(0, 0, 0)), angle, x));
 		shaders.draw(model, rotate(translate(identity, vec3(3, 0, 0)), angle, y));

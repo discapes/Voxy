@@ -26,9 +26,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	instance->projMatrix = glm::perspective(radians(opts.FOV), (float)opts.width / opts.height, 0.1f, 100.0f);
 }
 
-int Camera::getKey(int key)
+int Camera::isDown(int key)
 {
-	return glfwGetKey(instance->opts.window, key);
+	return glfwGetKey(instance->opts.window, key) == GLFW_PRESS;
 }
 
 void Camera::processInput()
