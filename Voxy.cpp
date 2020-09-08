@@ -2,6 +2,7 @@
 #include "Macros.h"
 #include "StandardShaders.h"
 #include "TextPrinter.h"
+#include "Cube.h"
 
 #include "util/shader.hpp"
 #include "util/texture.hpp"
@@ -17,31 +18,48 @@ int main(void)
 	ViewOptions opts;
 	opts = init(opts);
 	Camera camera(opts);
-	Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
+	Shaders&& shaders = StandardShaders("CubeShader.vert", "CubeShader.frag", camera);
+	//	Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
 	TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
 	Model suzanne("suzanne.obj", "uvmap.DDS");
+	Cube cube;
 
+	glUseProgram(shaders.program);
 	do
 	{
 		newFrameDelta();
 		glfwPollEvents();
-
-		static bool paused{};
-		ifKeyEvent(GLFW_KEY_P,
-			paused ^= event;
-			if (event) glfwSetInputMode(opts.window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-			if (!paused) glfwSetCursorPos(opts.window, opts.width / 2, opts.height / 2);
-		,)
-		if (paused)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			continue;
+			static bool paused{};
+			static bool before = Camera::isDown(GLFW_KEY_P);
+			bool now = Camera::isDown(GLFW_KEY_P);
+			if (now != before && now)
+			{
+				paused = !paused;
+				glfwSetInputMode(opts.window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+				if (paused)
+				{
+					char text[] = "Paused";
+					printer.print(text, 250, 300, 50);
+					if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
+				} else glfwSetCursorPos(opts.window, opts.width / 2, opts.height / 2);
+			} before = now;
+			if (paused)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				continue;
+			}
 		}
 		
 		camera.processInput();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		drawThreeModels(suzanne, shaders);
+		//drawThreeModels(suzanne, shaders);
+		static float angle = 0;
+		shaders.drawCube(rotate(translate(base, vec3(0, 0, 0)), angle, x));
+		shaders.drawCube(rotate(translate(base, vec3(3, 0, 0)), angle, y));
+		shaders.drawCube(rotate(translate(base, vec3(-3, 0, 0)), angle, z));
+		//angle -= (float)getFrameDelta();
 		printInfo(camera, printer);
 
 		if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
@@ -94,7 +112,7 @@ ViewOptions init(ViewOptions opts)
 
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	opts.width = width;
 	opts.height = height;
@@ -126,27 +144,25 @@ void printInfo(Camera& camera, TextPrinter& printer)
 
 void drawThreeModels(Model& model, Shaders& shaders)
 {
-	glUseProgram(shaders.program);
-
 	static float angle = 0;
-	static vec3 x(1, 0, 0);
-	static vec3 y(0, 1, 0);
-	static vec3 z(0, 0, 1);
-	static mat4 identity(1);
 
 	static bool altTransform{};
-	ifKeyEvent(GLFW_KEY_F, altTransform ^= event,)
+	
+	static bool before = Camera::isDown(GLFW_KEY_F);
+	bool now = Camera::isDown(GLFW_KEY_F);
+	if (now != before) altTransform ^= now;
+	before = now;
 
 	if (altTransform)
 	{
-		shaders.draw(model, rotate(translate(identity, vec3(0, 0, 0)), angle, x));
-		shaders.draw(model, rotate(translate(identity, vec3(3, 0, 0)), angle, y));
-		shaders.draw(model, rotate(translate(identity, vec3(-3, 0, 0)), angle, z));
+		shaders.draw(model, rotate(translate(base, vec3(0, 0, 0)), angle, x));
+		shaders.draw(model, rotate(translate(base, vec3(3, 0, 0)), angle, y));
+		shaders.draw(model, rotate(translate(base, vec3(-3, 0, 0)), angle, z));
 	} else
 	{
-		shaders.draw(model, translate(rotate(identity, angle, x), vec3(0, 0, 0)));
-		shaders.draw(model, translate(rotate(identity, angle, y), vec3(3, 0, 0)));
-		shaders.draw(model, translate(rotate(identity, angle, z), vec3(-3, 0, 0)));
+		shaders.draw(model, translate(rotate(base, angle, x), vec3(0, 0, 0)));
+		shaders.draw(model, translate(rotate(base, angle, y), vec3(3, 0, 0)));
+		shaders.draw(model, translate(rotate(base, angle, z), vec3(-3, 0, 0)));
 	}
 	angle -= (float)getFrameDelta();
 }

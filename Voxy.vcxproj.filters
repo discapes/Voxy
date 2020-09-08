@@ -51,6 +51,9 @@
     <ClCompile Include="Macros.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util\objloader.hpp">
@@ -92,6 +95,9 @@
     <ClInclude Include="Macros.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="StandardShader.frag">
@@ -104,6 +110,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="TextShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="CubeShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="CubeShader.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

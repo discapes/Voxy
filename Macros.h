@@ -9,15 +9,6 @@ double getFrameDelta();
 void newFrameDelta();
 double fps();
 
-#define ifEvent(value, doIf, doElse)	\
-{ static bool event = true;				\
-if (value)								\
-{ doIf; event = false;					\
-} else { doElse; event = true; } }		\
-
-#define ifKeyEvent(key, doIf, doElse)		\
-ifEvent(Camera::isDown(key), doIf, doElse)	\
-
 // event, more like notPressedLastTime
 struct ViewOptions
 {
@@ -32,3 +23,8 @@ struct ViewOptions
 	int width = 1024;
 	int height = 768;
 };
+
+static vec3 x(1, 0, 0);
+static vec3 y(0, 1, 0);
+static vec3 z(0, 0, 1);
+static mat4 base(1);

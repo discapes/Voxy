@@ -55,6 +55,8 @@ void TextPrinter::print(const char* text, int x, int y, int size)
 	glBindBuffer(GL_ARRAY_BUFFER, uvBuf);
 	glBufferData(GL_ARRAY_BUFFER, UVs.size() * sizeof(glm::vec2), &UVs[0], GL_STATIC_DRAW);
 
+	GLint oProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &oProgram);
 	glUseProgram(program);
 
 	glBindTexture(GL_TEXTURE_2D, fontAtlas);
@@ -74,6 +76,7 @@ void TextPrinter::print(const char* text, int x, int y, int size)
 
 	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());
 
+	glUseProgram(oProgram);
 	if (!wasEnabled) glDisable(GL_BLEND);
 
 	glDisableVertexAttribArray(0);

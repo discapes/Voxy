@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Macros.cpp" />
     <ClCompile Include="StandardShaders.cpp" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Macros.h" />
@@ -186,6 +188,8 @@
     <ClInclude Include="util\vboindexer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CubeShader.frag" />
+    <None Include="CubeShader.vert" />
     <None Include="StandardShader.frag" />
     <None Include="StandardShader.vert" />
     <None Include="TextShader.frag" />

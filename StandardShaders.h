@@ -21,12 +21,14 @@ class StandardShaders : public Shaders
 public:
 	StandardShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera);
 
-	void draw(Model& model, mat4 modelMatrix);
+	void draw(const Model& model, const mat4& modelMatrix);
 
-	void draw(Model& model, vec3 location)
+	void draw(const Model& model, vec3 location)
 	{
 		return draw(model, glm::translate(mat4(1), location));
 	}
+
+	void drawCube(const mat4& modelMatrix);
 
 	~StandardShaders();
 };
