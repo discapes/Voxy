@@ -18,8 +18,8 @@ int main(void)
 	ViewOptions opts;
 	opts = init(opts);
 	Camera camera(opts);
-	//Shaders&& shaders = StandardShaders("OrangeShader.vert", "OrangeShader.frag", camera);
-	Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
+	Shaders&& shaders = StandardShaders("OrangeShader.vert", "OrangeShader.frag", camera);
+	//Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
 	TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
 	Model suzanne("suzanne.obj", "uvmap.DDS");
 	Cube cube;
@@ -54,7 +54,7 @@ int main(void)
 		camera.processInput();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		drawThreeModels(suzanne, shaders);
+		//drawThreeModels(suzanne, shaders);
 		static float angle = 0;
 		shaders.drawCube(rotate(translate(base, vec3(0, 0, 0)), angle, x));
 		shaders.drawCube(rotate(translate(base, vec3(3, 0, 0)), angle, y));
@@ -114,9 +114,6 @@ ViewOptions init(ViewOptions opts)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	//glFrontFace(GL_CW);
-	GLint ff;
-	glGetIntegerv(GL_FRONT_FACE, &ff);
-	printf("%x\n", ff);
 
 	opts.width = width;
 	opts.height = height;
