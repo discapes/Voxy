@@ -112,10 +112,10 @@
     <None Include="TextShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="CubeShader.vert">
+    <None Include="OrangeShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="CubeShader.frag">
+    <None Include="OrangeShader.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

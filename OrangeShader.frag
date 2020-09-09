@@ -15,7 +15,7 @@ uniform vec3 lightPos;
 void main()
 {
 
-	vec3 matDiffuseColor = texture(tex, f_uv).rgb;
+	vec3 matDiffuseColor = vec3(1,0.5,0);//texture(tex, f_uv).rgb;
 	vec3 matSpecularColor = vec3(0.3,0.3,0.3);
 	vec3 matAmbientColor = vec3(0.1,0.1,0.1) * matDiffuseColor;
 
@@ -26,11 +26,11 @@ void main()
 	float diffuseCos = clamp(dot(n, l), 0, 1);
 	float specularCos = clamp(dot(f_eyeDirection, reflect(-l, n)), 0, 1);
 
-	color = vec3(1,1,1);
-	/*matAmbientColor +
+	color =
+	matAmbientColor +
 	(
 		matDiffuseColor * diffuseCos 
 		+ matSpecularColor * pow(specularCos, 5)
 	)
-	* lightColor / (dist * dist);*/
+	* lightColor / (dist * dist);
 }

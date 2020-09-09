@@ -17,11 +17,11 @@ uniform vec3 lightPos;
 
 void main()
 {
-	gl_Position = MVP * vec4(pos, 1);/*
+	gl_Position = MVP * vec4(pos, 1);
 	f_uv = uv;
     vec4 pos_w = M * vec4(pos, 1);
 	f_pos = pos_w.xyz;
 	f_normal = (M * vec4(normal, 0)).xyz;;
 	f_lightDirection = lightPos - f_pos;
-	f_eyeDirection = normalize(vec3(0,0,0) - (V * pos_w).xyz);*/
+	f_eyeDirection = normalize(vec3(0,0,0) - (V * pos_w).xyz);
 }

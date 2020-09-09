@@ -7,7 +7,8 @@ StandardShaders::StandardShaders(const char* vertexShaderName, const char* fragm
 	fragmentShaderName(fragmentShaderName),
 	camera(camera)
 {
-	program = LoadShaders(vertexShaderName, fragmentShaderName);
+	program = LoadShaders(vertexShaderName, fragmentShaderName);	
+	if (program == NULL) std::exit(1);
 	uniLightPos = glGetUniformLocation(program, "lightPos");
 	uniMVP = glGetUniformLocation(program, "MVP");
 	uniM = glGetUniformLocation(program, "M");
