@@ -102,8 +102,8 @@ mat4 Camera::calcViewMatrix()
 		sinLat,
 		-cosLat * cosLong
 	);
-
-	vec3 up = vec3( // @Discape next step is to take advantage of the fact that sin(x + pi / 2) = cos(x) and cos(x + pi / 2) = -sin(x) and make it so that you only compute all these sines and cosines once
+	
+	vec3 up = vec3( // dot: next step is to take advantage of the fact that sin(x + pi / 2) = cos(x) and cos(x + pi / 2) = -sin(x)
 		sinLong * -sinLat,
 		cosLat,
 		sinLat * cosLong

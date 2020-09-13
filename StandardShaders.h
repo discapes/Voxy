@@ -30,5 +30,10 @@ public:
 
 	void drawCube(const mat4& modelMatrix);
 
+	void drawCube(vec3 location)
+	{
+		return drawCube(glm::translate(mat4(1), location));
+	}
+
 	~StandardShaders();
 };

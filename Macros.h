@@ -12,8 +12,8 @@ double fps();
 // event, more like notPressedLastTime
 struct ViewOptions
 {
-	bool fullscreen = true;
-	bool doubleBuffered = false;
+	bool fullscreen = false;
+	bool doubleBuffered = true;
 
 	GLFWwindow* window;
 	double lookSpeed = 1;
