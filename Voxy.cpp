@@ -1,6 +1,10 @@
 #include "includes.h"
 #include "Macros.h"
-#include "StandardShaders.h"
+#include "MonoLightShaders.h"
+#include "Shaders.h"
+#include "LightShaders.h"
+#include "StandardModel.h"
+#include "StandardModelLoader.h"
 #include "TextPrinter.h"
 #include "Cube.h"
 
@@ -11,62 +15,67 @@
 
 ViewOptions init(ViewOptions defaults);
 void printInfo(Camera& camera, TextPrinter& printer);
-void drawThreeModels(Model& model, Shaders& shaders);
-void renderWorld(Shaders& shaders);
+void drawDemoModels(StandardModel& model, Shaders& shaders);
+void drawDemoPlane(StandardModel& cube, Shaders& shaders);
 
 int main(void)
 {
 	ViewOptions opts;
 	opts = init(opts);
 	Camera camera(opts);
-	Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
-	Shaders&& shaders2 = StandardShaders("OrangeShader.vert", "OrangeShader.frag", camera);
+
 	TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
-	Model suzanne("suzanne.obj", "uvmap.DDS");
-	Cube cube;
-	glUseProgram(shaders.program);
-	do
+	StandardModel suzanne = StandardModelLoader::loadObjAndDDS("suzanne.obj", "uvmap.DDS");
+	StandardModel cube = StandardModelLoader::loadCubeAndDDS("uvmap.DDS");
+
+	Light light(vec3(0, 4, 0), vec3(1, 0.5, 0), 10);
+	Shaders&& shaders = MonoLightShaders("MonoLightShader.vert", "MonoLightShader.frag", camera, light);
+	Shaders&& lightShaders = LightShaders("LightShader.vert", "LightShader.frag", camera);
+
+	while (glfwGetKey(opts.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(opts.window) == 0)
 	{
 		newFrameDelta();
-		glfwPollEvents();
-		{
-			static bool paused{};
-			static bool before = Camera::isDown(GLFW_KEY_P);
-			bool now = Camera::isDown(GLFW_KEY_P);
-			if (now != before && now)
-			{
-				paused = !paused;
-				glfwSetInputMode(opts.window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		{ /* Handle input */
+			glfwPollEvents();
+			{ /* Handle pausing */
+				static bool paused{};
+				static bool before = Camera::isDown(GLFW_KEY_P);
+				bool now = Camera::isDown(GLFW_KEY_P);
+				if (now != before && now)
+				{
+					paused = !paused;
+					glfwSetInputMode(opts.window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+					if (paused)
+					{
+						char text[] = "Paused";
+						printer.print(text, 250, 300, 50);
+						if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
+					} else glfwSetCursorPos(opts.window, opts.width / 2, opts.height / 2);
+				} before = now;
 				if (paused)
 				{
-					char text[] = "Paused";
-					printer.print(text, 250, 300, 50);
-					if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
-				} else glfwSetCursorPos(opts.window, opts.width / 2, opts.height / 2);
-			} before = now;
-			if (paused)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
-				continue;
+					std::this_thread::sleep_for(std::chrono::milliseconds(50));
+					continue;
+				}
 			}
+			camera.processInput();
 		}
-		
-		camera.processInput();
+		 
+		{ /* Render */
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glUseProgram(shaders.program);
+			drawDemoModels(suzanne, shaders);
+			drawDemoPlane(cube, shaders);
+			glUseProgram(lightShaders.program);
+			lightShaders.draw(cube, light.pos);
+			printInfo(camera, printer);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(shaders.program);
-		drawThreeModels(suzanne, shaders);
-		renderWorld(shaders);
-		glUseProgram(shaders2.program);
-		shaders2.drawCube(vec3(0, 4, 0));
-		printInfo(camera, printer);
-
-		if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
+			if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
+		}
 	}
-	while (glfwGetKey(opts.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(opts.window) == 0);
 }
 
-void renderWorld(Shaders& shaders)
+void drawDemoPlane(StandardModel& cube, Shaders& shaders)
 {
 	static double y[10][10];
 	static bool up[10][10];
@@ -90,8 +99,27 @@ void renderWorld(Shaders& shaders)
 			if (y[i][j] < 0) up[i][j] = true;
 			int modifier = up[i][j] ? 1 : -1;
 			y[i][j] += modifier * getFrameDelta();
-			shaders.drawCube(vec3((float)i-5, y[i][j], (float)j-5));
+			shaders.draw(cube, vec3((float)i-5, y[i][j], (float)j-5));
 		}
+	}
+}
+
+void drawDemoModels(StandardModel& model, Shaders& shaders)
+{
+	static bool toggle{ true };
+
+	static bool before = Camera::isDown(GLFW_KEY_F);
+	bool now = Camera::isDown(GLFW_KEY_F);
+	if (now != before) toggle ^= now;
+	before = now;;
+
+	if (toggle)
+	{
+		static float angle = 0;
+		shaders.draw(model, rotate(translate(base, vec3(2, 3, 2)), angle, right));
+		shaders.draw(model, rotate(translate(base, vec3(3, 7, 3)), angle, back));
+		shaders.draw(model, rotate(translate(base, vec3(-3, 5, 0)), angle, up));
+		angle -= (float)getFrameDelta();
 	}
 }
 
@@ -138,7 +166,7 @@ ViewOptions init(ViewOptions opts)
 	glfwPollEvents(); // so the below line will work
 	glfwSetCursorPos(window, width / 2, height / 2);
 
-	glClearColor(0.0f, 0.0f, 0.f, 0.0f);
+	glClearColor(0.05f, 0.0f, 0.05f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -168,26 +196,4 @@ void printInfo(Camera& camera, TextPrinter& printer)
 	printer.print(text, 700, 30, 20);
 	sprintf(text, "%+.1fz", camera.pos.z);
 	printer.print(text, 700, 10, 20);
-}
-
-void drawThreeModels(Model& model, Shaders& shaders)
-{
-	static float angle = 0;
-
-	static bool toggle { true };
-	
-	static bool before = Camera::isDown(GLFW_KEY_F);
-	bool now = Camera::isDown(GLFW_KEY_F);
-	if (now != before) toggle ^= now;
-	before = now;
-
-	constexpr int y = 7;
-
-	if (toggle)
-	{
-		shaders.draw(model, rotate(translate(base, vec3(2, 3, 0)), angle, right));
-		shaders.draw(model, rotate(translate(base, vec3(3, y, 3)), angle, back));
-		shaders.draw(model, rotate(translate(base, vec3(-3, y, 0)), angle, up));
-	}
-	angle -= (float)getFrameDelta();
 }

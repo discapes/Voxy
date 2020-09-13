@@ -1,6 +1,19 @@
 #pragma once
 #include "includes.h"
-#include "Macros.h"
+
+struct ViewOptions
+{
+	bool fullscreen = false;
+	bool doubleBuffered = true;
+
+	GLFWwindow* window;
+	double lookSpeed = 1;
+	double moveSpeed = 3;
+	float FOV = 110;
+
+	int width = 1024;
+	int height = 768;
+};
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
@@ -10,10 +23,10 @@ public:
 
 	ViewOptions& opts;
 
-	vec3 pos { 0,4,-10 };
+	vec3 pos { -4.9, 6.1, 5.6 };
 	vec3 forward{ 0,0,-1 };
-	double latitude { -.5 };
-	double longtitude{ 0 };
+	double latitude { -30.1/90 };
+	double longtitude{ 29.7/180 };
 
 	mat4 viewMatrix { glm::lookAt(pos, pos + vec3(0,0,-1), vec3(0, 1, 0)) };
 	mat4 projMatrix { glm::perspective(radians(opts.FOV), (float)opts.width / opts.height, 0.1f, 100.0f) };

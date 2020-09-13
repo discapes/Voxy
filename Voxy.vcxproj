@@ -159,9 +159,10 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="LightShaders.cpp" />
+    <ClCompile Include="StandardModelLoader.cpp" />
     <ClCompile Include="Macros.cpp" />
-    <ClCompile Include="StandardShaders.cpp" />
+    <ClCompile Include="MonoLightShaders.cpp" />
     <ClCompile Include="TextPrinter.cpp" />
     <ClCompile Include="util\objloader.cpp" />
     <ClCompile Include="util\quaternion_utils.cpp" />
@@ -175,10 +176,13 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="includes.h" />
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightShaders.h" />
+    <ClInclude Include="StandardModel.h" />
+    <ClInclude Include="StandardModelLoader.h" />
     <ClInclude Include="Macros.h" />
     <ClInclude Include="Shaders.h" />
-    <ClInclude Include="StandardShaders.h" />
+    <ClInclude Include="MonoLightShaders.h" />
     <ClInclude Include="TextPrinter.h" />
     <ClInclude Include="util\objloader.hpp" />
     <ClInclude Include="util\quaternion_utils.hpp" />
@@ -188,10 +192,10 @@
     <ClInclude Include="util\vboindexer.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OrangeShader.frag" />
-    <None Include="OrangeShader.vert" />
-    <None Include="StandardShader.frag" />
-    <None Include="StandardShader.vert" />
+    <None Include="LightShader.frag" />
+    <None Include="LightShader.vert" />
+    <None Include="MonoLightShader.frag" />
+    <None Include="MonoLightShader.vert" />
     <None Include="TextShader.frag" />
     <None Include="TextShader.vert" />
   </ItemGroup>

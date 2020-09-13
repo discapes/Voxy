@@ -39,12 +39,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="StandardShaders.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="TextPrinter.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -52,6 +46,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Cube.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MonoLightShaders.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardModelLoader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShaders.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,13 +83,7 @@
     <ClInclude Include="includes.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="StandardShaders.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="TextPrinter.h">
@@ -98,24 +95,39 @@
     <ClInclude Include="Cube.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="MonoLightShaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardModelLoader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardModel.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="StandardShader.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="StandardShader.vert">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="TextShader.frag">
       <Filter>shaders</Filter>
     </None>
     <None Include="TextShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="OrangeShader.vert">
+    <None Include="LightShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="OrangeShader.frag">
+    <None Include="LightShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="MonoLightShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="MonoLightShader.vert">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

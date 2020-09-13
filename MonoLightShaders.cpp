@@ -4,9 +4,7 @@
 #include "Cube.h"
 
 MonoLightShaders::MonoLightShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera, const Light& light)
-	: vertexShaderName(vertexShaderName),
-	fragmentShaderName(fragmentShaderName),
-	camera(camera),
+	: camera(camera),
 	light(light)
 {
 	program = LoadShaders(vertexShaderName, fragmentShaderName);	
@@ -25,7 +23,7 @@ MonoLightShaders::~MonoLightShaders()
 	glDeleteProgram(program);
 }
 
-void MonoLightShaders::draw(const Model& model, const mat4& modelMatrix)
+void MonoLightShaders::draw(const StandardModel& model, const mat4& modelMatrix)
 {
 	glm::mat4 MVP = camera.projMatrix * camera.viewMatrix * modelMatrix;
 

@@ -1,14 +1,12 @@
 #include "Shaders.h"
 #include "Light.h"
-#include "Model.h"
+#include "StandardModel.h"
+#include "Camera.h"
 
 class MonoLightShaders : public Shaders
 {
 	const Camera& camera;
 	const Light& light;
-
-	const char* vertexShaderName;
-	const char* fragmentShaderName;
 
 	GLuint uniLightPos{};
 	GLuint uniMVP{};
@@ -20,12 +18,7 @@ class MonoLightShaders : public Shaders
 public:
 	MonoLightShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera, const Light& light);
 
-	void draw(const Model& model, const mat4& modelMatrix);
-
-	void draw(const Model& model, vec3 location)
-	{
-		return draw(model, glm::translate(mat4(1), location));
-	}
+	void draw(const StandardModel& model, const mat4& modelMatrix);
 
 	~MonoLightShaders();
 };
