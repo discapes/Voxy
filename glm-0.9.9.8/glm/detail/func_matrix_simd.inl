@@ -14,12 +14,12 @@ namespace detail
 	{
 		GLM_STATIC_ASSERT(detail::is_aligned<Q>::value, "Specialization requires aligned");
 
-		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const& x, mat<4, 4, float, Q> const& y)
+		GLM_FUNC_QUALIFIER static mat<4, 4, float, Q> call(mat<4, 4, float, Q> const& x, mat<4, 4, float, Q> const& up)
 		{
 			mat<4, 4, float, Q> Result;
 			glm_mat4_matrixCompMult(
 				*static_cast<glm_vec4 const (*)[4]>(&x[0].data),
-				*static_cast<glm_vec4 const (*)[4]>(&y[0].data),
+				*static_cast<glm_vec4 const (*)[4]>(&up[0].data),
 				*static_cast<glm_vec4(*)[4]>(&Result[0].data));
 			return Result;
 		}

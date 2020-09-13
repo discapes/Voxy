@@ -29,9 +29,9 @@ namespace detail
 	template<qualifier Q>
 	struct compute_dot<vec<4, float, Q>, float, true>
 	{
-		GLM_FUNC_QUALIFIER static float call(vec<4, float, Q> const& x, vec<4, float, Q> const& y)
+		GLM_FUNC_QUALIFIER static float call(vec<4, float, Q> const& x, vec<4, float, Q> const& up)
 		{
-			return _mm_cvtss_f32(glm_vec1_dot(x.data, y.data));
+			return _mm_cvtss_f32(glm_vec1_dot(x.data, up.data));
 		}
 	};
 
@@ -40,8 +40,8 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static vec<3, float, Q> call(vec<3, float, Q> const& a, vec<3, float, Q> const& b)
 		{
-			__m128 const set0 = _mm_set_ps(0.0f, a.z, a.y, a.x);
-			__m128 const set1 = _mm_set_ps(0.0f, b.z, b.y, b.x);
+			__m128 const set0 = _mm_set_ps(0.0f, a.z, a.up, a.x);
+			__m128 const set1 = _mm_set_ps(0.0f, b.z, b.up, b.x);
 			__m128 const xpd0 = glm_vec4_cross(set0, set1);
 
 			vec<4, float, Q> Result;
@@ -122,13 +122,13 @@ namespace detail
 	template<qualifier Q>
 	struct compute_dot<vec<4, float, Q>, float, true>
 	{
-		GLM_FUNC_QUALIFIER static float call(vec<4, float, Q> const& x, vec<4, float, Q> const& y)
+		GLM_FUNC_QUALIFIER static float call(vec<4, float, Q> const& x, vec<4, float, Q> const& up)
 		{
 #if GLM_ARCH & GLM_ARCH_ARMV8_BIT
-			float32x4_t v = vmulq_f32(x.data, y.data);
+			float32x4_t v = vmulq_f32(x.data, up.data);
 			return vaddvq_f32(v);
 #else  // Armv7a with Neon
-			float32x4_t p = vmulq_f32(x.data, y.data);
+			float32x4_t p = vmulq_f32(x.data, up.data);
 			float32x2_t v = vpadd_f32(vget_low_f32(p), vget_high_f32(p));
 			v = vpadd_f32(v, v);
 			return vget_lane_f32(v, 0);

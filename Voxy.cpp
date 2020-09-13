@@ -12,6 +12,7 @@
 ViewOptions init(ViewOptions defaults);
 void printInfo(Camera& camera, TextPrinter& printer);
 void drawThreeModels(Model& model, Shaders& shaders);
+void renderWorld(Shaders& shaders);
 
 int main(void)
 {
@@ -19,6 +20,7 @@ int main(void)
 	opts = init(opts);
 	Camera camera(opts);
 	Shaders&& shaders = StandardShaders("StandardShader.vert", "StandardShader.frag", camera);
+	Shaders&& shaders2 = StandardShaders("OrangeShader.vert", "OrangeShader.frag", camera);
 	TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
 	Model suzanne("suzanne.obj", "uvmap.DDS");
 	Cube cube;
@@ -52,18 +54,45 @@ int main(void)
 		camera.processInput();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shaders.program);
 		drawThreeModels(suzanne, shaders);
-		static float angle = 0;
-		shaders.drawCube(rotate(translate(base, vec3(0, 0, 0)), angle, x));
-		shaders.drawCube(rotate(translate(base, vec3(3, 0, 0)), angle, y));
-		shaders.drawCube(rotate(translate(base, vec3(-3, 0, 0)), angle, z));
-		shaders.drawCube(vec3(0, 0, 0));
-		angle -= (float)getFrameDelta();
+		renderWorld(shaders);
+		glUseProgram(shaders2.program);
+		shaders2.drawCube(vec3(0, 4, 0));
 		printInfo(camera, printer);
 
 		if (opts.doubleBuffered) glfwSwapBuffers(opts.window); else glFlush();
 	}
 	while (glfwGetKey(opts.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(opts.window) == 0);
+}
+
+void renderWorld(Shaders& shaders)
+{
+	static double y[10][10];
+	static bool up[10][10];
+	once()
+	{
+		srand(0); //dont use srand()/rand()
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				y[i][j] = rand() / (float)RAND_MAX;
+				up[i][j] = rand() % 2;
+			}
+		}
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			if (y[i][j] > 1) up[i][j] = false;
+			if (y[i][j] < 0) up[i][j] = true;
+			int modifier = up[i][j] ? 1 : -1;
+			y[i][j] += modifier * getFrameDelta();
+			shaders.drawCube(vec3((float)i-5, y[i][j], (float)j-5));
+		}
+	}
 }
 
 ViewOptions init(ViewOptions opts)
@@ -109,7 +138,7 @@ ViewOptions init(ViewOptions opts)
 	glfwPollEvents(); // so the below line will work
 	glfwSetCursorPos(window, width / 2, height / 2);
 
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -145,23 +174,20 @@ void drawThreeModels(Model& model, Shaders& shaders)
 {
 	static float angle = 0;
 
-	static bool altTransform{};
+	static bool toggle { true };
 	
 	static bool before = Camera::isDown(GLFW_KEY_F);
 	bool now = Camera::isDown(GLFW_KEY_F);
-	if (now != before) altTransform ^= now;
+	if (now != before) toggle ^= now;
 	before = now;
 
-	if (altTransform)
+	constexpr int y = 7;
+
+	if (toggle)
 	{
-		shaders.draw(model, rotate(translate(base, vec3(0, 0, 0)), angle, x));
-		shaders.draw(model, rotate(translate(base, vec3(3, 0, 0)), angle, y));
-		shaders.draw(model, rotate(translate(base, vec3(-3, 0, 0)), angle, z));
-	} else
-	{
-		shaders.draw(model, translate(rotate(base, angle, x), vec3(0, 0, 0)));
-		shaders.draw(model, translate(rotate(base, angle, y), vec3(3, 0, 0)));
-		shaders.draw(model, translate(rotate(base, angle, z), vec3(-3, 0, 0)));
+		shaders.draw(model, rotate(translate(base, vec3(2, 3, 0)), angle, right));
+		shaders.draw(model, rotate(translate(base, vec3(3, y, 3)), angle, back));
+		shaders.draw(model, rotate(translate(base, vec3(-3, y, 0)), angle, up));
 	}
 	angle -= (float)getFrameDelta();
 }

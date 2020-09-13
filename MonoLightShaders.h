@@ -1,9 +1,11 @@
 #include "Shaders.h"
+#include "Light.h"
 #include "Model.h"
 
-class StandardShaders : public Shaders
+class MonoLightShaders : public Shaders
 {
 	const Camera& camera;
+	const Light& light;
 
 	const char* vertexShaderName;
 	const char* fragmentShaderName;
@@ -15,11 +17,8 @@ class StandardShaders : public Shaders
 	GLuint uniTex{};
 	GLuint uniLightColor{};
 
-	vec3 lightPos = vec3(0, 4, 0);
-	vec3 lightColor = vec3(20, 20, 20);
-
 public:
-	StandardShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera);
+	MonoLightShaders(const char* vertexShaderName, const char* fragmentShaderName, const Camera& camera, const Light& light);
 
 	void draw(const Model& model, const mat4& modelMatrix);
 
@@ -28,12 +27,5 @@ public:
 		return draw(model, glm::translate(mat4(1), location));
 	}
 
-	void drawCube(const mat4& modelMatrix);
-
-	void drawCube(vec3 location)
-	{
-		return drawCube(glm::translate(mat4(1), location));
-	}
-
-	~StandardShaders();
+	~MonoLightShaders();
 };

@@ -122,9 +122,9 @@ namespace glm {
 		static float32x4_t madd_lane(float32x4_t acc, float32x4_t v, float32x4_t vlane, int lane) {
 #if GLM_ARCH & GLM_ARCH_ARMV8_BIT
 #ifdef GLM_CONFIG_FORCE_FMA
-#	define FMADD_LANE(acc, x, y, L) do { asm volatile ("fmla %0.4s, %1.4s, %2.4s" : "+w"(acc) : "w"(x), "w"(dup_lane(y, L))); } while(0)
+#	define FMADD_LANE(acc, x, up, L) do { asm volatile ("fmla %0.4s, %1.4s, %2.4s" : "+w"(acc) : "w"(x), "w"(dup_lane(up, L))); } while(0)
 #else
-#	define FMADD_LANE(acc, x, y, L) do { acc = vmlaq_laneq_f32(acc, x, y, L); } while(0)
+#	define FMADD_LANE(acc, x, up, L) do { acc = vmlaq_laneq_f32(acc, x, up, L); } while(0)
 #endif
 
 			switch(lane) { 

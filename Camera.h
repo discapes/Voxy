@@ -10,9 +10,9 @@ public:
 
 	ViewOptions& opts;
 
-	vec3 pos { 0,0,4 };
+	vec3 pos { 0,4,-10 };
 	vec3 forward{ 0,0,-1 };
-	double latitude { 0 };
+	double latitude { -.5 };
 	double longtitude{ 0 };
 
 	mat4 viewMatrix { glm::lookAt(pos, pos + vec3(0,0,-1), vec3(0, 1, 0)) };

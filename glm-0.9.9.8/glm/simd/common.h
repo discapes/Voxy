@@ -172,11 +172,11 @@ GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_fract(glm_vec4 x)
 	return sub0;
 }
 
-GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_mod(glm_vec4 x, glm_vec4 y)
+GLM_FUNC_QUALIFIER glm_vec4 glm_vec4_mod(glm_vec4 x, glm_vec4 up)
 {
-	glm_vec4 const div0 = glm_vec4_div(x, y);
+	glm_vec4 const div0 = glm_vec4_div(x, up);
 	glm_vec4 const flr0 = glm_vec4_floor(div0);
-	glm_vec4 const mul0 = glm_vec4_mul(y, flr0);
+	glm_vec4 const mul0 = glm_vec4_mul(up, flr0);
 	glm_vec4 const sub0 = glm_vec4_sub(x, mul0);
 	return sub0;
 }

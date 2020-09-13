@@ -9,6 +9,9 @@ double getFrameDelta();
 void newFrameDelta();
 double fps();
 
+#define once() \
+	static bool done{}; if (!done && (done = true))
+
 // event, more like notPressedLastTime
 struct ViewOptions
 {
@@ -24,7 +27,7 @@ struct ViewOptions
 	int height = 768;
 };
 
-static vec3 x(1, 0, 0);
-static vec3 y(0, 1, 0);
-static vec3 z(0, 0, 1);
+static vec3 right(1, 0, 0);
+static vec3 up(0, 1, 0);
+static vec3 back(0, 0, 1);
 static mat4 base(1);

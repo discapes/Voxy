@@ -6,9 +6,9 @@ namespace detail
 	template<qualifier Q>
 	struct compute_dot<qua<float, Q>, float, true>
 	{
-		static GLM_FUNC_QUALIFIER float call(qua<float, Q> const& x, qua<float, Q> const& y)
+		static GLM_FUNC_QUALIFIER float call(qua<float, Q> const& x, qua<float, Q> const& up)
 		{
-			return _mm_cvtss_f32(glm_vec1_dot(x.data, y.data));
+			return _mm_cvtss_f32(glm_vec1_dot(x.data, up.data));
 		}
 	};
 }//namespace detail

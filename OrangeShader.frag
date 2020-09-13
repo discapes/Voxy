@@ -26,7 +26,7 @@ void main()
 	float diffuseCos = clamp(dot(n, l), 0, 1);
 	float specularCos = clamp(dot(f_eyeDirection, reflect(-l, n)), 0, 1);
 
-	color =
+	color = matDiffuseColor;
 	matAmbientColor +
 	(
 		matDiffuseColor * diffuseCos 

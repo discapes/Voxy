@@ -1,13 +1,15 @@
 #include "Cube.h"
 
-GLsizei Cube::numIndices;
+bool Cube::alive = false;
+Cube Cube::c;
 
-GLuint Cube::vertexArray;
-GLuint Cube::elementBuf;
-GLuint Cube::vertexBuf;
-GLuint Cube::uvBuf;
-GLuint Cube::normalBuf;
+GLsizei Cube::numIndices_;
 
+GLuint Cube::vertexArray_;
+GLuint Cube::elementBuf_;
+GLuint Cube::vertexBuf_;
+GLuint Cube::uvBuf_;
+GLuint Cube::normalBuf_;
 
 static vec2 uvs[24]
 {
@@ -142,34 +144,38 @@ static unsigned short indices[36]
 
 Cube::Cube()
 {
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
+	if (alive) throw "Cube should be created only once!";
+	alive = true;
 
-	glGenBuffers(1, &vertexBuf);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuf);
+	glGenVertexArrays(1, &c.vertexArray_);
+	glBindVertexArray(c.vertexArray_);
+
+	glGenBuffers(1, &c.vertexBuf_);
+	glBindBuffer(GL_ARRAY_BUFFER, c.vertexBuf_);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &uvBuf);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuf);
+	glGenBuffers(1, &c.uvBuf_);
+	glBindBuffer(GL_ARRAY_BUFFER, c.uvBuf_);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &normalBuf);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuf);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normals),normals, GL_STATIC_DRAW);
+	glGenBuffers(1, &c.normalBuf_);
+	glBindBuffer(GL_ARRAY_BUFFER, c.normalBuf_);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &elementBuf);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuf);
+	glGenBuffers(1, &c.elementBuf_);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, c.elementBuf_);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	numIndices = sizeof(indices);
+	numIndices_ = sizeof(indices);
 }
 
 Cube::~Cube()
 {
 	puts("~Cube()");
-	glDeleteBuffers(1, &vertexBuf);
-	glDeleteBuffers(1, &uvBuf);
-	glDeleteBuffers(1, &normalBuf);
-	glDeleteBuffers(1, &elementBuf);
-	glDeleteVertexArrays(1, &vertexArray);
+	alive = false;
+	glDeleteBuffers(1, &c.vertexBuf_);
+	glDeleteBuffers(1, &c.uvBuf_);
+	glDeleteBuffers(1, &c.normalBuf_);
+	glDeleteBuffers(1, &c.elementBuf_);
+	glDeleteVertexArrays(1, &c.vertexArray_);
 }

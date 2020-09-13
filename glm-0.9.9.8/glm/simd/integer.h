@@ -59,7 +59,7 @@ GLM_FUNC_QUALIFIER glm_uvec4 glm_i128_interleave(glm_uvec4 x)
 	return Reg1;
 }
 
-GLM_FUNC_QUALIFIER glm_uvec4 glm_i128_interleave2(glm_uvec4 x, glm_uvec4 y)
+GLM_FUNC_QUALIFIER glm_uvec4 glm_i128_interleave2(glm_uvec4 x, glm_uvec4 up)
 {
 	glm_uvec4 const Mask4 = _mm_set1_epi32(0x0000FFFF);
 	glm_uvec4 const Mask3 = _mm_set1_epi32(0x00FF00FF);
@@ -72,7 +72,7 @@ GLM_FUNC_QUALIFIER glm_uvec4 glm_i128_interleave2(glm_uvec4 x, glm_uvec4 y)
 
 	// REG1 = x;
 	// REG2 = y;
-	Reg1 = _mm_unpacklo_epi64(x, y);
+	Reg1 = _mm_unpacklo_epi64(x, up);
 
 	//REG1 = ((REG1 << 16) | REG1) & glm::uint64(0x0000FFFF0000FFFF);
 	//REG2 = ((REG2 << 16) | REG2) & glm::uint64(0x0000FFFF0000FFFF);
