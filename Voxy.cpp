@@ -77,29 +77,30 @@ int main(void)
 
 void drawDemoPlane(StandardModel& cube, Shaders& shaders)
 {
-	static double y[10][10];
-	static bool up[10][10];
+	constexpr size_t size = 10;
+	static double y[size][size];
+	static bool up[size][size];
 	once()
 	{
 		srand(0); //dont use srand()/rand()
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < size; i++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < size; j++)
 			{
 				y[i][j] = rand() / (float)RAND_MAX;
 				up[i][j] = rand() % 2;
 			}
 		}
 	}
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < size; i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < size; j++)
 		{
 			if (y[i][j] > 1) up[i][j] = false;
 			if (y[i][j] < 0) up[i][j] = true;
 			int modifier = up[i][j] ? 1 : -1;
 			y[i][j] += modifier * getFrameDelta();
-			shaders.draw(cube, vec3((float)i-5, y[i][j], (float)j-5));
+			shaders.draw(cube, vec3((float)i-size/2, y[i][j], (float)j-size/2));
 		}
 	}
 }

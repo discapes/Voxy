@@ -20,6 +20,7 @@ Camera::~Camera()
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+
 	ViewOptions& opts = instance->opts;
 	opts.FOV -= (float)yoffset;
 	opts.FOV = clamp(opts.FOV, 60.f, 160.f);
