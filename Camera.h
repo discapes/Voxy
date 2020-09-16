@@ -3,8 +3,8 @@
 
 struct ViewOptions
 {
-	bool fullscreen = true;
-	bool doubleBuffered = false;
+	bool fullscreen = false;
+	bool doubleBuffered = true;
 
 	GLFWwindow* window;
 	double lookSpeed = 1;

@@ -26,7 +26,7 @@ int main(void)
 
 	TextPrinter printer("Holstein.DDS", "TextShader.vert", "TextShader.frag");
 	StandardModel suzanne = StandardModelLoader::loadObjAndDDS("suzanne.obj", "uvmap.DDS");
-	StandardModel cube = StandardModelLoader::loadCubeAndDDS("uvmap.DDS");
+	StandardModel cube = StandardModelLoader::loadCubeAndBMP("cube.bmp");
 
 	Light light(vec3(0, 4, 0), vec3(1, 0.5, 0), 10);
 	Shaders&& shaders = MonoLightShaders("MonoLightShader.vert", "MonoLightShader.frag", camera, light);

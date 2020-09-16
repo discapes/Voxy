@@ -52,7 +52,7 @@ StandardModel StandardModelLoader::loadCubeAndDDS(const char* textureDDS)
 	glGenVertexArrays(1, &m.vertexArray);
 	glBindVertexArray(m.vertexArray);
 
-	m.texture = loadDDS(textureDDS);
+	m.texture = loadBMP_custom(textureDDS);
 
 	glGenBuffers(1, &m.vertexBuf);
 	glBindBuffer(GL_ARRAY_BUFFER, m.vertexBuf);
